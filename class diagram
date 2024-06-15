@@ -1,0 +1,76 @@
+classDiagram
+    %% Classes
+    class Cliente {
+        +String nome
+        +List<Preferencia> preferencias
+        +selecionarRoupa(look: Look): void
+    }
+
+    class Atendente {
+        +String nome
+        +iniciarAssistencia(cliente: Cliente): void
+        +processarPagamento(cliente: Cliente, pagamento: Pagamento): void
+    }
+
+    class FashionMateUI {
+        +exibirInterface(): void
+        +coletarPreferencias(cliente: Cliente): List<Preferencia>
+        +exibirRecomendacoes(recomendacoes: List<Look>): void
+        +exibirDetalhesPagamento(): void
+    }
+
+    class FashionMateCore {
+        +gerarRecomendacoes(preferencias: List<Preferencia>): List<Look>
+        +consultarEstoque(preferencias: List<Preferencia>): List<PeçaDeRoupa>
+        +processarPagamento(pagamento: Pagamento): void
+    }
+
+    class BaseDeDadosEstoque {
+        +List<PeçaDeRoupa> pecasDeRoupa
+        +consultarDisponibilidade(preferencias: List<Preferencia>): List<PeçaDeRoupa>
+    }
+
+    class OperadorDeEstoque {
+        +String nome
+        +prepararPedido(look: Look): void
+    }
+
+    class PeçaDeRoupa {
+        +String nome
+        +String cor
+        +String tamanho
+        +String estacao
+        +Double preco
+        +Boolean disponibilidade
+    }
+
+    class Look {
+        +List<PeçaDeRoupa> pecas
+        +Double precoTotal
+        +validarLook(orçamento: Double): Boolean
+    }
+
+    class Pagamento {
+        +Double valor
+        +String metodoPagamento
+        +processar(): void
+    }
+
+    class Preferencia {
+        +String tipo
+        +String valor
+    }
+
+    %% Relacionamentos
+    Cliente "1" -- "1..*" Preferencia : possui
+    Cliente "1" -- "1" FashionMateUI : interage com
+    Atendente "1" -- "1" Cliente : assiste
+    Atendente "1" -- "1" FashionMateUI : usa
+    FashionMateUI "1" -- "1" FashionMateCore : comunica com
+    FashionMateCore "1" -- "1" BaseDeDadosEstoque : consulta
+    FashionMateCore "1" -- "0..*" Look : gera
+    BaseDeDadosEstoque "1" -- "0..*" PeçaDeRoupa : armazena
+    Look "1" -- "0..*" PeçaDeRoupa : consiste em
+    OperadorDeEstoque "1" -- "0..*" Look : prepara
+    Cliente "1" -- "1" Pagamento : realiza
+    FashionMateCore "1" -- "1" Pagamento : processa
